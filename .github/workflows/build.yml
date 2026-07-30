@@ -1,7 +1,33 @@
-name: Build
+name: Build Firmware
 
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+    runs-on: ubuntu-latest
+    container:
+      image: zmkfirmware/zmk-build-arm:stable
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize ZMK Workspace
+        run: |
+          west init -l . || true
+          west config --global zephyr.base-working-directory /workspaces/zmk
+          west update
+
+      - name: Build Firmware
+        run: |
+          west build -s zmk/app -b nice_nano/nrf52840/zmk – -DSHIELD=hexpad -DZMK_EXTRA_MODULES="$GITHUB_WORKSPACE"
+
+      - name: Rename Artifact
+        run: |
+          mkdir -p build/artifacts
+          cp build/zephyr/zmk.uf2 build/artifacts/hexpad_nice_nano.uf2
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: build/artifacts/hexpad_nice_nano.uf2
