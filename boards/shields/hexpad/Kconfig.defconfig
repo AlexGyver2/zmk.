@@ -1,0 +1,6 @@
+if SHIELD_HEXPAD
+
+config ZMK_KEYBOARD_NAME
+    default "HexPad"
+
+endif
