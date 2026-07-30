@@ -19,7 +19,7 @@ jobs:
 
       - name: Build Firmware
         run: |
-          west build -b nice_nano/nrf52840/zmk – -DSHIELD=hexpad -DZMK_EXTRA_MODULES="$GITHUB_WORKSPACE"
+          west build -s . -b nice_nano/nrf52840/zmk – -DSHIELD=hexpad -DZMK_EXTRA_MODULES="$GITHUB_WORKSPACE"
 
       - name: Rename Artifact
         run: |
